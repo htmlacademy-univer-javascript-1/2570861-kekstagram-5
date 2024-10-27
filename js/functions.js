@@ -1,5 +1,5 @@
 // Начало
-function lenStrCheck(str,maxLen){
+export function lenStrCheck(str,maxLen){
   str = str.replaceAll(' ','');
   return str.length <= maxLen;
 }
