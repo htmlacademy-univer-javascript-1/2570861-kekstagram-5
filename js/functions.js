@@ -27,15 +27,6 @@ function workDayLimit(dayStart, dayEnd, meetStart, meetTime){
       }
       break;
     case (4 && meetEnd.indexOf(':') === 1):
-      meetEnd = String(+meetStart.slice(0,1) + Math.floor(meetTime / 60)) +
-      ':' + String(+meetStart.slice(2) + meetTime % 60) ;
-
-      if (meetEnd.indexOf(':') === 1){ (meetEnd = '0' + meetEnd);
-      }
-
-      if (+meetEnd.slice(3) >= 60){ meetEnd = String(+meetEnd.slice(0,2) + 1) + ':' + String (+meetEnd.slice(3) % 60);
-      }
-      break;
     case (3):
       meetEnd = String(+meetStart.slice(0,1) + Math.floor(meetTime / 60)) +
       ':' + String(+meetStart.slice(2) + meetTime % 60) ;
@@ -48,6 +39,30 @@ function workDayLimit(dayStart, dayEnd, meetStart, meetTime){
       break;
   }
 
+  if (dayStart.indexOf(':') === 1){ dayStart = '0' + dayStart;
+  }
+
+  if (meetStart.indexOf(':') === 1){ meetStart = '0' + meetStart;
+  }
+
+  if (dayStart.slice(0,2) > meetStart.slice(0,2)){ return false;
+  }
+  else if ((dayStart.slice(0,2) === meetStart.slice(0,2)) && dayStart.slice(3) > meetStart.slice(3)){ return false;
+  }
+
+  if (dayEnd.indexOf(':') === 1){ dayEnd = '0' + dayEnd;
+  }
+
+  if (dayEnd.slice(0,2) > meetEnd.slice(0,2)){ return true;
+  }
+  else if ((dayEnd.slice(0,2) === meetEnd.slice(0,2)) && dayEnd.slice(3) >= meetEnd.slice(3)){ return true;
+  } else { return false;
+  }
+
 }
-workDayLimit();
+workDayLimit('08:00', '17:30', '14:00', 90);
+workDayLimit('8:0', '10:0', '8:0', 120);
+workDayLimit('08:00', '14:30', '14:00', 90);
+workDayLimit('14:00', '17:30', '08:0', 90);
+workDayLimit('8:00', '17:30', '08:00', 900);
 
