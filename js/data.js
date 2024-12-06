@@ -1,3 +1,4 @@
+import {getRandomInt, getRandomArrElement, createID} from './util.js';
 const PICTURE_COUNT = 25;
 const MIN_LIKES_COUNT = 15;
 const MAX_LIKES_COUNT = 200;
@@ -23,43 +24,25 @@ const DESCRIPTIONS = [
 ];
 const NAMES = ['Олег', 'Семен', 'Аджелла', 'Люба', 'Глеб', 'Иван', 'Эдуард'];
 
-const getRandomInt = (a,b) => {
-  const lower = Math.ceil(Math.min(a,b));
-  const upper = Math.floor(Math.max(a,b));
-  const result = Math.floor(Math.random() * (upper - lower + 1)) + lower;
-  return result;
-};
 
-const getRandomArrayElement = (items) =>
-  items[getRandomInt(0, items.length - 1)];
-
-const createIdGenerator = () => {
-  let lastGeneratedId = 0;
-
-  return () => {
-    lastGeneratedId += 1;
-    return lastGeneratedId;
-  };
-};
-
-const generateCommentId = createIdGenerator();
+const generateCommentId = createID();
 
 const createMessage = () => Array.from (
   { length: getRandomInt(1,2) },
-  () => getRandomArrayElement(COMMENTS),
+  () => getRandomArrElement(COMMENTS),
 ).join('');
 
 const createComment = () => ({
   id: generateCommentId(),
   avatar: `img/avatar-${getRandomInt(1, AVATAR_COUNT)}.svg`,
   message: createMessage(),
-  name: getRandomArrayElement(NAMES),
+  name: getRandomArrElement(NAMES),
 });
 
 const createPicture = (index) => ({
   id: index,
   url: `photos/${index}.jpg`,
-  descriptions: getRandomArrayElement(DESCRIPTIONS),
+  descriptions: getRandomArrElement(DESCRIPTIONS),
   likes: getRandomInt(MIN_LIKES_COUNT, MAX_LIKES_COUNT),
   comments: Array.from(
     {length: getRandomInt(0, COMMENT_COUNT)},
@@ -72,21 +55,9 @@ const getPictures = () => Array.from(
   (_, index) => createPicture(index + 1),
 );
 
-getPictures();
 
 export {
-  PICTURE_COUNT
-  , MIN_LIKES_COUNT
-  , MAX_LIKES_COUNT
-  , AVATAR_COUNT
-  , COMMENT_COUNT
-  , COMMENTS
-  , DESCRIPTIONS
-  , NAMES
-  , getRandomInt
-  , getRandomArrayElement
-  , createIdGenerator
-  , generateCommentId
+  generateCommentId
   , createMessage
   , createComment
   , createPicture
