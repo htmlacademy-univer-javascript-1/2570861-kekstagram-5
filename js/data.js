@@ -1,7 +1,7 @@
 import {getRandomInt, getRandomArrElement, createID} from './util.js';
 const PICTURE_COUNT = 25;
 const MIN_LIKES_COUNT = 15;
-const MAX_LIKES_COUNT = 252;
+const MAX_LIKES_COUNT = 250;
 const AVATAR_COUNT = 6;
 const COMMENT_COUNT = 30;
 const COMMENTS = [
@@ -48,7 +48,7 @@ const createComment = () => ({
 // Функция для создания объекта "картинка"
 const createPicture = (index) => ({
   id: index,
-  url: `photos/${index}.jpg`,
+  url: `photos/${getRandomInt(1,index)}.jpg`,
   descriptions: getRandomArrElement(DESCRIPTIONS),
   likes: getRandomInt(MIN_LIKES_COUNT, MAX_LIKES_COUNT),
   comments: Array.from({ length: getRandomInt(0, COMMENT_COUNT) }, createComment),
