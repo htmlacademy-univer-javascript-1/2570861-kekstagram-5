@@ -17,7 +17,6 @@ lenStrCheck('asdfghj', 7);
 function workDayLimit(dayStart, dayEnd, meetStart, meetTime) {
   let meetEnd = '';
 
-  // Функция для добавления ведущих нулей к времени
   function addLeadingZero(time) {
     return time.indexOf(':') === 1 ? '0' + time : time;
   }
@@ -34,19 +33,15 @@ function workDayLimit(dayStart, dayEnd, meetStart, meetTime) {
       break;
   }
 
-  // Убедимся, что meetEnd правильно отформатировано
   meetEnd = addLeadingZero(meetEnd);
 
-  // Форматируем время начала рабочего дня и встречи
   dayStart = addLeadingZero(dayStart);
   meetStart = addLeadingZero(meetStart);
   dayEnd = addLeadingZero(dayEnd);
 
-  // Проверяем, что встреча начинается после рабочего дня
   if (dayStart.slice(0, 2) > meetStart.slice(0, 2)) return false;
   if (dayStart.slice(0, 2) === meetStart.slice(0, 2) && dayStart.slice(3) > meetStart.slice(3)) return false;
 
-  // Проверяем, что встреча заканчивается до конца рабочего дня
   if (dayEnd.slice(0, 2) > meetEnd.slice(0, 2)) return true;
   if (dayEnd.slice(0, 2) === meetEnd.slice(0, 2) && dayEnd.slice(3) >= meetEnd.slice(3)) return true;
 
