@@ -17,4 +17,15 @@ const createID = () => {
   };
 };
 
-export {getRandomInt, getRandomArrElement, createID};
+const isRepeats = function(arr) {
+  const elements = {};
+  for (const element of arr) {
+    if (elements[element]) {
+      return true;
+    }
+    elements[element] = 1;
+  }
+  return false;
+};
+
+export {getRandomInt, getRandomArrElement, createID, isRepeats};

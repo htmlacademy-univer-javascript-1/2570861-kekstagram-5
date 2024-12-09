@@ -39,17 +39,17 @@ function workDayLimit(dayStart, dayEnd, meetStart, meetTime) {
   meetStart = addLeadingZero(meetStart);
   dayEnd = addLeadingZero(dayEnd);
 
-  if (dayStart.slice(0, 2) > meetStart.slice(0, 2)) return false;
-  if (dayStart.slice(0, 2) === meetStart.slice(0, 2) && dayStart.slice(3) > meetStart.slice(3)) return false;
+  if (dayStart.slice(0, 2) > meetStart.slice(0, 2)) {return false;}
+  if (dayStart.slice(0, 2) === meetStart.slice(0, 2) && dayStart.slice(3) > meetStart.slice(3)) {return false;}
 
-  if (dayEnd.slice(0, 2) > meetEnd.slice(0, 2)) return true;
-  if (dayEnd.slice(0, 2) === meetEnd.slice(0, 2) && dayEnd.slice(3) >= meetEnd.slice(3)) return true;
+  if (dayEnd.slice(0, 2) > meetEnd.slice(0, 2)) {return true;}
+  if (dayEnd.slice(0, 2) === meetEnd.slice(0, 2) && dayEnd.slice(3) >= meetEnd.slice(3)) {return true;}
 
   return false;
 }
 
-console.log(workDayLimit('08:00', '17:30', '14:00', 90));  // true
-console.log(workDayLimit('8:0', '10:0', '8:0', 120));     // false
-console.log(workDayLimit('08:00', '14:30', '14:00', 90));  // false
-console.log(workDayLimit('14:00', '17:30', '08:0', 90));  // true
-console.log(workDayLimit('8:00', '17:30', '08:00', 900)); // false
+(workDayLimit('08:00', '17:30', '14:00', 90)); // true
+(workDayLimit('8:0', '10:0', '8:0', 120)); // false
+(workDayLimit('08:00', '14:30', '14:00', 90)); // false
+(workDayLimit('14:00', '17:30', '08:0', 90)); // true
+(workDayLimit('8:00', '17:30', '08:00', 900)); // false
