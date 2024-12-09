@@ -2,4 +2,6 @@
 import './data.js';
 import './util.js';
 import './thumbnailCreator.js';
+import'./inputForm.js';
+
 
