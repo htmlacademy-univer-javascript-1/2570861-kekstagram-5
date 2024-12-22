@@ -56,6 +56,7 @@ const renderComments = (comments) => {
   commContainer.appendChild(fragment);
 };
 
+
 const updateCommentCount = () => {
   commContainerCount.textContent = `${commentsShown} из ${displayedComments.length}`;
 };
@@ -70,6 +71,11 @@ const loadMoreComments = () => {
   }
 };
 
+commLoader.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  loadMoreComments();
+});
+
 const makeFullScreen = function(picture){
   bigPicture.classList.remove('hidden');
   body.classList.add('modal-open');
@@ -77,9 +83,9 @@ const makeFullScreen = function(picture){
   bigPictureImg.src = picture.url;
   bigPictureImg.alt = picture.description;
   pictureLikes.textContent = picture.likes;
-  pictureDescription.textContent = picture.descriptions;
+  pictureDescription.textContent = picture.description;
   pictureCommentsCount.textContent = picture.comments.length;
-  displayedComments = picture.comments;
+  displayedComments = picture.comments || [];
   commentsShown = 0;
   commContainer.innerHTML = '';
   loadMoreComments();
