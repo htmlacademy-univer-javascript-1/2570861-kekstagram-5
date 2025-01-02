@@ -1,6 +1,7 @@
 import {sendData} from './api.js';
 import { initializeEffects, resetEffects } from './pictureEff.js';
 import { displaySuccessMessage, displayErrorMessage } from './resultMessages.js';
+
 const HASHTAGS_LIMIT = 5;
 const CORRECT_SYMBOLS = /^#[a-zа-яё0-9]{1,19}$/i;
 
@@ -88,6 +89,7 @@ const closeInput = () => {
   editingWindowElement.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', escCloseInput);
+  document.removeEventListener('click', closeInputButton);
   uploadForm.removeEventListener('submit', onFormSubmit); // eslint-disable-line
   removeEventToScale();
 };
@@ -127,10 +129,6 @@ const escCloseInput = () => {
 
 const openEditingWindow = (evt) => {
   const file = evt.target.files[0];
-  if (!file) {
-    console.error('Файл не выбран.');
-    return;
-  }
   const imageURL = URL.createObjectURL(file);
   previewImage.src = imageURL;
   effectsPrev.forEach((element) => {
@@ -142,7 +140,6 @@ const openEditingWindow = (evt) => {
   escCloseInput();
   addEventToScale();
 };
-
 
 
 inputPicture.addEventListener('change', openEditingWindow);
