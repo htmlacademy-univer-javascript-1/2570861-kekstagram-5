@@ -1,12 +1,16 @@
+import { sendData } from './api.js';
+import { initializeEffects, resetEffects } from './pictureEff.js';
+import { displaySuccessMessage, displayErrorMessage } from './resultMessages.js';
+
 const HASHTAGS_LIMIT = 5;
 const CORRECT_SYMBOLS = /^#[a-zа-яё0-9]{1,19}$/i;
-
 const ErrorText = {
   INVALID_COUNT: `Максимум ${HASHTAGS_LIMIT} хэштегов`,
   NOT_UNIQUE: 'Хэштеги должны быть уникальными',
   INVALID_PATTERN: 'Неправильный хэштег',
 };
 
+const body = document.querySelector('body');
 const uploadForm = document.querySelector('.img-upload__form');
 const previewImage = document.querySelector('.img-upload__preview img');
 const inputPicture = uploadForm.querySelector('.img-upload__input');
@@ -17,6 +21,8 @@ const inputScale = document.querySelector('.img-upload__scale');
 const scaleValue = inputScale.querySelector('.scale__control--value');
 const minusScaleButton = document.querySelector('.scale__control--smaller');
 const plusScaleButton = document.querySelector('.scale__control--bigger');
+const submit = uploadForm.querySelector('.img-upload__submit');
+const effectsPrev = uploadForm.querySelectorAll('.effects__preview');
 
 // Функция для изменения масштаба
 const changeScale = (increment) => {
@@ -31,10 +37,7 @@ const changeScale = (increment) => {
 
 // Добавление событий на кнопки изменения масштаба
 const addEventToScale = () => {
-  // Увеличение масштаба при клике на кнопку увеличения
   plusScaleButton.addEventListener('click', () => changeScale(true));
-
-  // Уменьшение масштаба при клике на кнопку уменьшения
   minusScaleButton.addEventListener('click', () => changeScale(false));
 };
 
@@ -44,10 +47,12 @@ const removeEventToScale = () => {
   minusScaleButton.removeEventListener('click', () => changeScale(false));
 };
 
+const resetImageScale = () => changeScale(100);
 
 const pristine = new Pristine(uploadForm, {
   classTo: 'img-upload__field-wrapper',
   errorTextParent: 'img-upload__field-wrapper',
+  errorTextClass: 'img-upload__field-wrapper--error',
 });
 
 // Нормализация строк хэштегов
@@ -73,10 +78,30 @@ pristine.addValidator(hashtagField, hasUniqueTags, ErrorText.NOT_UNIQUE, 1, true
 pristine.addValidator(hashtagField, hasValidTags, ErrorText.INVALID_PATTERN, 2, true);
 
 const closeInput = () => {
+  uploadForm.reset();
+  resetImageScale();
+  resetEffects();
+  pristine.reset();
   editingWindowElement.classList.add('hidden');
   document.body.classList.remove('modal-open');
-
+  document.removeEventListener('keydown', escCloseInput);
+  uploadForm.removeEventListener('submit', onFormSubmit);
   removeEventToScale();
+};
+
+const onFormSubmit = async (evt) => {
+  evt.preventDefault();
+  if (pristine.validate()) {
+    submit.disabled = true;
+    try {
+      await sendData(new FormData(uploadForm));
+      displaySuccessMessage();
+      closeInput();
+    } catch {
+      displayErrorMessage();
+      closeInput();
+    }
+  }
 };
 
 const closeInputButton = () => {
@@ -96,27 +121,21 @@ const escCloseInput = () => {
   document.addEventListener('keydown', onEscPress);
 };
 
-const openEditingWindow = () => {
-
-  editingWindowElement.classList.remove('hidden');
-  document.body.classList.add('modal-open');
-
-
-  const file = inputPicture.files[0];
+const openEditingWindow = (evt) => {
+  const file = evt.target.files[0];
   if (file) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const previewElement = document.querySelector('.img-upload__preview img');
-      previewElement.src = reader.result;
-    };
-    reader.readAsDataURL(file);
+    const imageURL = URL.createObjectURL(file);
+    previewImage.src = imageURL;
+    effectsPrev.forEach((element) => {
+      element.style.backgroundImage = `url('${imageURL}')`;
+    });
+    editingWindowElement.classList.remove('hidden');
+    body.classList.add('modal-open');
+    closeInputButton();
+    escCloseInput();
+    addEventToScale();
   }
-
-  addEventToScale();
-
-  closeInputButton();
-  escCloseInput();
 };
 
-
 inputPicture.addEventListener('change', openEditingWindow);
+initializeEffects();
