@@ -1,10 +1,9 @@
-import {sendData} from './api.js';
+import { sendData } from './api.js';
 import { initializeEffects, resetEffects } from './pictureEff.js';
 import { displaySuccessMessage, displayErrorMessage } from './resultMessages.js';
 
 const HASHTAGS_LIMIT = 5;
 const CORRECT_SYMBOLS = /^#[a-zа-яё0-9]{1,19}$/i;
-
 const ErrorText = {
   INVALID_COUNT: `Максимум ${HASHTAGS_LIMIT} хэштегов`,
   NOT_UNIQUE: 'Хэштеги должны быть уникальными',
@@ -38,10 +37,7 @@ const changeScale = (increment) => {
 
 // Добавление событий на кнопки изменения масштаба
 const addEventToScale = () => {
-  // Увеличение масштаба при клике на кнопку увеличения
   plusScaleButton.addEventListener('click', () => changeScale(true));
-
-  // Уменьшение масштаба при клике на кнопку уменьшения
   minusScaleButton.addEventListener('click', () => changeScale(false));
 };
 
@@ -89,26 +85,24 @@ const closeInput = () => {
   editingWindowElement.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', escCloseInput);
-  document.removeEventListener('click', closeInputButton);
-  uploadForm.removeEventListener('submit', onFormSubmit); // eslint-disable-line
+  uploadForm.removeEventListener('submit', onFormSubmit);
   removeEventToScale();
 };
 
-const onFormSubmit = (async (evt) => {
+const onFormSubmit = async (evt) => {
   evt.preventDefault();
   if (pristine.validate()) {
     submit.disabled = true;
-    await sendData(new FormData(uploadForm))
-      .then (() => {
-        displaySuccessMessage();
-        closeInput();
-      })
-      .catch(() => {
-        displayErrorMessage();
-        closeInput();
-      });
+    try {
+      await sendData(new FormData(uploadForm));
+      displaySuccessMessage();
+      closeInput();
+    } catch {
+      displayErrorMessage();
+      closeInput();
+    }
   }
-});
+};
 
 const closeInputButton = () => {
   closeButton.addEventListener('click', (evt) => {
@@ -129,26 +123,19 @@ const escCloseInput = () => {
 
 const openEditingWindow = (evt) => {
   const file = evt.target.files[0];
-  const imageURL = URL.createObjectURL(file);
-  previewImage.src = imageURL;
-  effectsPrev.forEach((element) => {
-    element.style.backgroundImage = `url('${imageURL}')`;
-  });
-  editingWindowElement.classList.remove('hidden');
-  body.classList.add('modal-open');
-  closeInputButton();
-  escCloseInput();
-  addEventToScale();
+  if (file) {
+    const imageURL = URL.createObjectURL(file);
+    previewImage.src = imageURL;
+    effectsPrev.forEach((element) => {
+      element.style.backgroundImage = `url('${imageURL}')`;
+    });
+    editingWindowElement.classList.remove('hidden');
+    body.classList.add('modal-open');
+    closeInputButton();
+    escCloseInput();
+    addEventToScale();
+  }
 };
-
 
 inputPicture.addEventListener('change', openEditingWindow);
 initializeEffects();
-
-uploadForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  if (pristine.validate()) {
-    onFormSubmit(evt);
-  }
-});
-
