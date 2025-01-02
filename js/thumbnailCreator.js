@@ -8,7 +8,7 @@ const picturesContainer = document.querySelector('.pictures');
 
 
 const fragment = document.createDocumentFragment();
-const createThumbnails = (photosData) => {
+export const createThumbnails = (photosData) => {
 
   photosData.forEach((photo) => {
     const newPicture = thumbnailTemp.cloneNode(true);
