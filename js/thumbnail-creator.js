@@ -1,5 +1,5 @@
 import {getPictures} from './data.js';
-import {makeFullScreen} from './fullscreenPicture.js';
+import {makeFullScreen} from './fullscreen-picture.js';
 
 const thumbnailTemp = document.querySelector('#picture')
   .content

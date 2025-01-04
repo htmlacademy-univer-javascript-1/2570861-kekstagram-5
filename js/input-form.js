@@ -1,12 +1,11 @@
-import {sendData} from './api.js';
-import { initializeEffects, resetEffects } from './pictureEff.js';
-import { displaySuccessMessage, displayErrorMessage, displayFormError } from './resultMessages.js';
-import { displayFilteredPhotos, filterContainer } from './thubnailsFilter.js';
+import { sendData } from './api.js';
+import { initializeEffects, resetEffects } from './picture-effects.js';
+import { displaySuccessMessage, displayErrorMessage, displayFormError } from './result-messages.js';
+import { displayFilteredPhotos, filterContainer } from './thubnails-filter.js';
 
 
 const HASHTAGS_LIMIT = 5;
 const CORRECT_SYMBOLS = /^#[a-zа-яё0-9]{1,19}$/i;
-
 const ErrorText = {
   INVALID_COUNT: `Максимум ${HASHTAGS_LIMIT} хэштегов`,
   NOT_UNIQUE: 'Хэштеги должны быть уникальными',
@@ -40,10 +39,7 @@ const changeScale = (increment) => {
 
 // Добавление событий на кнопки изменения масштаба
 const addEventToScale = () => {
-  // Увеличение масштаба при клике на кнопку увеличения
   plusScaleButton.addEventListener('click', () => changeScale(true));
-
-  // Уменьшение масштаба при клике на кнопку уменьшения
   minusScaleButton.addEventListener('click', () => changeScale(false));
 };
 
@@ -117,16 +113,18 @@ const escCloseInput = () => {
 
 const openEditingWindow = (evt) => {
   const file = evt.target.files[0];
-  const imageURL = URL.createObjectURL(file);
-  previewImage.src = imageURL;
-  effectsPrev.forEach((element) => {
-    element.style.backgroundImage = `url('${imageURL}')`;
-  });
-  editingWindowElement.classList.remove('hidden');
-  body.classList.add('modal-open');
-  closeInputButton();
-  escCloseInput();
-  addEventToScale();
+  if (file) {
+    const imageURL = URL.createObjectURL(file);
+    previewImage.src = imageURL;
+    effectsPrev.forEach((element) => {
+      element.style.backgroundImage = `url('${imageURL}')`;
+    });
+    editingWindowElement.classList.remove('hidden');
+    body.classList.add('modal-open');
+    closeInputButton();
+    escCloseInput();
+    addEventToScale();
+  }
 };
 
 const onFormSubmit = async (evt) => {
@@ -162,13 +160,9 @@ export const handleImageUpload = (photos) => {
   uploadForm.addEventListener('submit', async (evt) => {
     evt.preventDefault();
 
-    try {
-      await sendData(new FormData(uploadForm));
-      displayFilteredPhotos(photos);
-      filterContainer.style.display = 'flex';
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error('Ошибка отправки изображения:', err);
-    }
+    await sendData(new FormData(uploadForm));
+    displayFilteredPhotos(photos);
+    filterContainer.style.display = 'flex';
+
   });
 };

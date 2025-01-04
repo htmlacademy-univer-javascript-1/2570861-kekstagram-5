@@ -1,5 +1,5 @@
 import { getRandomArrElement, debounce } from './util.js';
-import { createThumbnails } from './thumbnailCreator.js';
+import { createThumbnails } from './thumbnail-creator.js';
 
 const MAX_THUMBNAIL_COUNT = 10;
 const ACTIVE_BUTTON_CLASS = 'img-filters__button--active';

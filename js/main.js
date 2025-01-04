@@ -1,10 +1,9 @@
-/* eslint-disable no-unused-vars */
 import './data.js';
 import './util.js';
-import './thumbnailCreator.js';
-import './inputForm.js';
+import './thumbnail-creator.js';
+import './input-form.js';
 import { getData } from './api.js';
-import { handleImageUpload } from './inputForm.js';
+import { handleImageUpload } from './input-form.js';
 const loadThumbnails = async () => {
   const alertSelector = '.alert_message';
 
