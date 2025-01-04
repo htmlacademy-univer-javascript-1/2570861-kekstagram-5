@@ -4,6 +4,17 @@ const documentBody = document.body;
 const successMessageTemplate = document.querySelector('#success').content.querySelector('.success');
 const errorMessageTemplate = document.querySelector('#error').content.querySelector('.error');
 
+const displayFormError = () => {
+  const alertElement = document.createElement('div');
+  alertElement.classList.add('load-error');
+  alertElement.textContent = 'Не удалось отправить форму. Пожалуйста, исправьте неверные поля и повторите попытку.';
+  document.body.appendChild(alertElement);
+
+  setTimeout(() => {
+    alertElement.remove();
+  }, 5000);
+};
+
 const removeMessage = () => {
   const activeMessage = document.querySelector('.success') || document.querySelector('.error');
   const closeButton = document.querySelector('.success__button') || document.querySelector('.error__button');
@@ -37,4 +48,4 @@ const displaySuccessMessage = () => displayMessage(successMessageTemplate, '.suc
 
 const displayErrorMessage = () => displayMessage(errorMessageTemplate, '.error__button');
 
-export { displaySuccessMessage, displayErrorMessage };
+export { displaySuccessMessage, displayErrorMessage, displayFormError };

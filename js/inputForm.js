@@ -1,6 +1,8 @@
 import { sendData } from './api.js';
 import { initializeEffects, resetEffects } from './pictureEff.js';
-import { displaySuccessMessage, displayErrorMessage } from './resultMessages.js';
+import { displaySuccessMessage, displayErrorMessage, displayFormError } from './resultMessages.js';
+import { displayFilteredPhotos, filterContainer } from './thubnailsFilter.js';
+
 
 const HASHTAGS_LIMIT = 5;
 const CORRECT_SYMBOLS = /^#[a-zа-яё0-9]{1,19}$/i;
@@ -84,24 +86,12 @@ const closeInput = () => {
   pristine.reset();
   editingWindowElement.classList.add('hidden');
   document.body.classList.remove('modal-open');
+  // eslint-disable-next-line no-use-before-define
   document.removeEventListener('keydown', escCloseInput);
-  uploadForm.removeEventListener('submit', onFormSubmit);
+  // eslint-disable-next-line no-use-before-define
+  document.removeEventListener('click', closeInputButton);
+  uploadForm.removeEventListener('submit', onFormSubmit); // eslint-disable-line
   removeEventToScale();
-};
-
-const onFormSubmit = async (evt) => {
-  evt.preventDefault();
-  if (pristine.validate()) {
-    submit.disabled = true;
-    try {
-      await sendData(new FormData(uploadForm));
-      displaySuccessMessage();
-      closeInput();
-    } catch {
-      displayErrorMessage();
-      closeInput();
-    }
-  }
 };
 
 const closeInputButton = () => {
@@ -137,5 +127,47 @@ const openEditingWindow = (evt) => {
   }
 };
 
+const onFormSubmit = async (evt) => {
+  evt.preventDefault();
+
+  if (!pristine.validate()) {
+    displayFormError();
+    return;
+  }
+
+  submit.disabled = true;
+
+  try {
+    await sendData(new FormData(uploadForm));
+    displaySuccessMessage();
+    closeInput();
+  } catch (error) {
+    displayErrorMessage();
+  } finally {
+    submit.disabled = false;
+  }
+};
+
+uploadForm.addEventListener('submit', onFormSubmit);
+
+
 inputPicture.addEventListener('change', openEditingWindow);
 initializeEffects();
+
+export const handleImageUpload = (photos) => {
+  filterContainer.style.display = 'none'; // Скрываем фильтры до отправки изображения
+
+  uploadForm.addEventListener('submit', async (evt) => {
+    evt.preventDefault();
+
+    try {
+      await sendData(new FormData(uploadForm));
+      displayFilteredPhotos(photos);
+      filterContainer.style.display = 'flex';
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Ошибка отправки изображения:', err);
+    }
+  });
+};
+

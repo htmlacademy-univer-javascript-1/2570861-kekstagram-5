@@ -1,3 +1,13 @@
+
+const debounce = (callback, timeoutDelay = 500) => {
+  let timeoutId;
+
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
+
 const getRandomInt = (a,b) => {
   const lower = Math.ceil(Math.min(a,b));
   const upper = Math.floor(Math.max(a,b));
@@ -5,8 +15,10 @@ const getRandomInt = (a,b) => {
   return result;
 };
 
-const getRandomArrElement = (items) =>
-  items[getRandomInt(0, items.length - 1)];
+const getRandomArrElement = (array, count) => {
+  const shuffled = array.slice().sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+};
 
 const createID = () => {
   let lastID = 0;
@@ -28,4 +40,4 @@ const isRepeats = function(arr) {
   return false;
 };
 
-export {getRandomInt, getRandomArrElement, createID, isRepeats};
+export { debounce, getRandomInt, getRandomArrElement, createID, isRepeats };

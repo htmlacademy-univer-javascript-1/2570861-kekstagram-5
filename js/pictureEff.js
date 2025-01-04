@@ -1,8 +1,9 @@
-const sliderValueElement = document.querySelector('.effect-level__value');
-const sliderContainer = document.querySelector('.img-upload__effect-level');
-const imagePreview = document.querySelector('.img-upload__preview img');
-const effectsList = document.querySelector('.effects');
-const slider = document.querySelector('.effect-level__slider');
+const upload = document.querySelector('.img-upload');
+const sliderValueElement = upload.querySelector('.effect-level__value');
+const sliderContainer = upload.querySelector('.img-upload__effect-level');
+const imagePreview = upload.querySelector('.img-upload__preview img');
+const effectsList = upload.querySelector('.effects');
+const slider = upload.querySelector('.effect-level__slider');
 
 const FilterTypes = {
   NONE: 'none',
@@ -74,18 +75,16 @@ function toggleSliderVisibility(shouldShow) {
 
 function setFilter(filter) {
   currentFilter = filter;
-
   if (filter === FilterTypes.NONE) {
     toggleSliderVisibility(false);
-    return;
-  }
-
-  toggleSliderVisibility(true);
-
-  if (!slider.noUiSlider) {
-    initializeSlider(SliderOptions[filter]);
+    imagePreview.style.filter = '';
   } else {
-    updateSliderOptions();
+    toggleSliderVisibility(true);
+    if (!slider.noUiSlider) {
+      initializeSlider(SliderOptions[filter]);
+    } else {
+      updateSliderOptions();
+    }
   }
 }
 
