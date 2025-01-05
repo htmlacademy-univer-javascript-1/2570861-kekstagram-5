@@ -1,7 +1,7 @@
 import { sendData } from './api.js';
 import { initializeEffects, resetEffects } from './picture-effects.js';
 import { displaySuccessMessage, displayErrorMessage, displayFormError } from './result-messages.js';
-import { displayFilteredPhotos, filterContainer } from './thubnails-filter.js';
+import { displayFilteredPhotos } from './thubnails-filter.js';
 
 
 const HASHTAGS_LIMIT = 5;
@@ -111,7 +111,7 @@ const escCloseInput = () => {
   document.addEventListener('keydown', onEscPress);
 };
 
-const openEditingWindow = (evt) => {
+const openEditingOnWindow = (evt) => {
   const file = evt.target.files[0];
   if (file) {
     const imageURL = URL.createObjectURL(file);
@@ -132,6 +132,7 @@ const onFormSubmit = async (evt) => {
 
   if (!pristine.validate()) {
     displayFormError();
+    displayErrorMessage();
     return;
   }
 
@@ -151,18 +152,16 @@ const onFormSubmit = async (evt) => {
 uploadForm.addEventListener('submit', onFormSubmit);
 
 
-inputPicture.addEventListener('change', openEditingWindow);
+inputPicture.addEventListener('change', openEditingOnWindow);
 initializeEffects();
 
 export const handleImageUpload = (photos) => {
-  filterContainer.style.display = 'none'; // Скрываем фильтры до отправки изображения
 
   uploadForm.addEventListener('submit', async (evt) => {
     evt.preventDefault();
 
     await sendData(new FormData(uploadForm));
     displayFilteredPhotos(photos);
-    filterContainer.style.display = 'flex';
 
   });
 };

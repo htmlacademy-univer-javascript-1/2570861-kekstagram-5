@@ -1,21 +1,21 @@
 const SERVER_URL = 'https://29.javascript.htmlacademy.pro/kekstagram';
 
-const ENDPOINTS = {
+const EndPoints = {
   FETCH_DATA: '/data',
   SUBMIT_DATA: '/'
 };
 
-const HTTP_METHODS = {
+const HttpMethods = {
   GET: 'GET',
   POST: 'POST'
 };
 
-const ERROR_MESSAGES = {
+const ErrorMessages = {
   FETCH_ERROR: 'Не удалось загрузить данные. Попробуйте обновить страницу',
   SUBMIT_ERROR: 'Не удалось отправить форму. Попробуйте ещё раз'
 };
 
-const fetchData = async (endpoint, errorMessage, method = HTTP_METHODS.GET, payload = null) => {
+const fetchData = async (endpoint, errorMessage, method = HttpMethods.GET, payload = null) => {
   try {
     const response = await fetch(`${SERVER_URL}${endpoint}`, {
       method,
@@ -32,8 +32,8 @@ const fetchData = async (endpoint, errorMessage, method = HTTP_METHODS.GET, payl
   }
 };
 
-const getData = () => fetchData(ENDPOINTS.FETCH_DATA, ERROR_MESSAGES.FETCH_ERROR);
+const getData = () => fetchData(EndPoints.FETCH_DATA, ErrorMessages.FETCH_ERROR);
 
-const sendData = (data) => fetchData(ENDPOINTS.SUBMIT_DATA, ERROR_MESSAGES.SUBMIT_ERROR, HTTP_METHODS.POST, data);
+const sendData = (data) => fetchData(EndPoints.SUBMIT_DATA, ErrorMessages.SUBMIT_ERROR, HttpMethods.POST, data);
 
 export { getData, sendData };

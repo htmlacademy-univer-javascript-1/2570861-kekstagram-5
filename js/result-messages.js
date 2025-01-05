@@ -15,33 +15,33 @@ const displayFormError = () => {
   }, 5000);
 };
 
-const removeMessage = () => {
+const onMessageRemove = () => {
   const activeMessage = document.querySelector('.success') || document.querySelector('.error');
   const closeButton = document.querySelector('.success__button') || document.querySelector('.error__button');
-  document.removeEventListener('keydown', closeMessageByEscape);
-  documentBody.removeEventListener('click', closeMessageByBodyClick);
-  closeButton.removeEventListener('click', removeMessage);
+  document.removeEventListener('keydown', onCloseMessageByEscape);
+  documentBody.removeEventListener('click', onCloseMessageByBodyClick);
+  closeButton.removeEventListener('click', onMessageRemove);
   activeMessage.remove();
 };
 
-function closeMessageByEscape(evt) {
+function onCloseMessageByEscape(evt) {
   if (evt.key === 'Escape') {
     evt.preventDefault();
-    removeMessage();
+    onMessageRemove();
   }
 }
 
-function closeMessageByBodyClick(evt) {
+function onCloseMessageByBodyClick(evt) {
   if (!(evt.target.closest('.success__inner') || evt.target.closest('.error__inner'))) {
-    removeMessage();
+    onMessageRemove();
   }
 }
 
 const displayMessage = (messageTemplate, closeButtonSelector) => {
   documentBody.append(messageTemplate);
-  document.addEventListener('keydown', closeMessageByEscape);
-  documentBody.addEventListener('click', closeMessageByBodyClick);
-  documentBody.querySelector(closeButtonSelector).addEventListener('click', removeMessage);
+  document.addEventListener('keydown', onCloseMessageByEscape);
+  documentBody.addEventListener('click', onCloseMessageByBodyClick);
+  documentBody.querySelector(closeButtonSelector).addEventListener('click', onMessageRemove);
 };
 
 const displaySuccessMessage = () => displayMessage(successMessageTemplate, '.success__button');
