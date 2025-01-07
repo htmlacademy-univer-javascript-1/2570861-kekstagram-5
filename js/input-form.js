@@ -126,7 +126,6 @@ const onOpenEditingWindow = (evt) => {
 
 const onFormSubmit = async (evt) => {
   evt.preventDefault();
-
   if (!pristine.validate()) {
     displayErrorMessage();
     return;
@@ -135,10 +134,17 @@ const onFormSubmit = async (evt) => {
   submit.disabled = true;
 
   try {
-    await sendData(new FormData(uploadForm));
-    displaySuccessMessage();
-    closeInput();
+    const response = await sendData(new FormData(uploadForm));
+
+    // Если сервер вернул код ошибки, обрабатываем её вручную
+    if (!response.ok) {
+      displayErrorMessage();
+    } else {
+      displaySuccessMessage();
+      closeInput();
+    }
   } catch (error) {
+    // Здесь перехватываются только ошибки сети
     displayErrorMessage();
   } finally {
     submit.disabled = false;

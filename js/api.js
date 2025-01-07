@@ -10,20 +10,17 @@ const HttpMethods = {
   POST: 'POST'
 };
 
-const ErrorMessages = {
-  FETCH_ERROR: 'Не удалось загрузить данные. Попробуйте обновить страницу',
-  SUBMIT_ERROR: 'Не удалось отправить форму. Попробуйте ещё раз'
-};
-
 const fetchData = async (endpoint, errorMessage, method = HttpMethods.GET, payload = null) => {
   try {
     const response = await fetch(`${SERVER_URL}${endpoint}`, {
       method,
-      body: payload
-    });
+      body: payload,
+    }).catch(() =>
+      null
+    );
 
-    if (!response.ok) {
-      throw new Error();
+    if (!response || !response.ok) {
+      throw new Error(errorMessage);
     }
 
     return await response.json();
@@ -32,8 +29,27 @@ const fetchData = async (endpoint, errorMessage, method = HttpMethods.GET, paylo
   }
 };
 
-const getData = () => fetchData(EndPoints.FETCH_DATA, ErrorMessages.FETCH_ERROR);
 
-const sendData = (data) => fetchData(EndPoints.SUBMIT_DATA, ErrorMessages.SUBMIT_ERROR, HttpMethods.POST, data);
+const getData = async () => {
+  try {
+    return await fetchData(EndPoints.FETCH_DATA);
+  } catch {
+    return null;
+  }
+};
+
+const sendData = async (data) => {
+  try {
+    const response = await fetch(`${SERVER_URL}${EndPoints.SUBMIT_DATA}`, {
+      method: HttpMethods.POST,
+      body: data,
+    });
+
+    return response;
+  } catch {
+    return null;
+  }
+};
+
 
 export { getData, sendData };
