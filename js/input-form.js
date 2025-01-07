@@ -26,7 +26,6 @@ const plusScaleButton = document.querySelector('.scale__control--bigger');
 const submit = uploadForm.querySelector('.img-upload__submit');
 const effectsPrev = uploadForm.querySelectorAll('.effects__preview');
 
-// Функция для изменения масштаба
 const changeScale = (increment) => {
   const currentScaleValue = parseInt(scaleValue.value, 10);
   const newScaleValue = currentScaleValue + (increment ? 25 : -25);
@@ -37,13 +36,11 @@ const changeScale = (increment) => {
   }
 };
 
-// Добавление событий на кнопки изменения масштаба
 const addEventToScale = () => {
   plusScaleButton.addEventListener('click', () => changeScale(true));
   minusScaleButton.addEventListener('click', () => changeScale(false));
 };
 
-// Удаление событий с кнопок изменения масштаба
 const removeEventToScale = () => {
   plusScaleButton.removeEventListener('click', () => changeScale(true));
   minusScaleButton.removeEventListener('click', () => changeScale(false));
@@ -57,24 +54,20 @@ const pristine = new Pristine(uploadForm, {
   errorTextClass: 'img-upload__field-wrapper--error',
 });
 
-// Нормализация строк хэштегов
 const normalizeTags = (tagString) =>
   tagString.trim().split(' ').filter(Boolean);
 
-// Проверка на правильность хэштегов
 const hasValidTags = (value) =>
   normalizeTags(value).every((tag) => CORRECT_SYMBOLS.test(tag));
 
 const hasValidCount = (value) =>
   normalizeTags(value).length <= HASHTAGS_LIMIT;
 
-// Проверка на уникальность хэштегов
 const hasUniqueTags = (value) => {
   const lowerCaseTags = normalizeTags(value).map((tag) => tag.toLowerCase());
   return lowerCaseTags.length === new Set(lowerCaseTags).size;
 };
 
-// Инициализация валидаторов с использованием pristine
 pristine.addValidator(hashtagField, hasValidCount, ErrorText.INVALID_COUNT, 3, true);
 pristine.addValidator(hashtagField, hasUniqueTags, ErrorText.NOT_UNIQUE, 1, true);
 pristine.addValidator(hashtagField, hasValidTags, ErrorText.INVALID_PATTERN, 2, true);
@@ -114,6 +107,7 @@ const escCloseInput = () => {
 };
 
 const onOpenEditingWindow = (evt) => {
+  // eslint-disable-next-line no-use-before-define
   uploadForm.addEventListener('submit', onFormSubmit);
   const file = evt.target.files[0];
   if (file) {
@@ -124,7 +118,6 @@ const onOpenEditingWindow = (evt) => {
     });
     editingWindowElement.classList.remove('hidden');
     body.classList.add('modal-open');
-    submit.disabled = false;
     closeInputButton();
     escCloseInput();
     addEventToScale();
@@ -166,3 +159,4 @@ export const handleImageUpload = (photos) => {
 
   });
 };
+
