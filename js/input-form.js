@@ -132,7 +132,6 @@ const onFormSubmit = async (evt) => {
 
   if (!pristine.validate()) {
     displayFormError();
-    displayErrorMessage();
     return;
   }
 
