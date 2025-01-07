@@ -1,6 +1,6 @@
 import { sendData } from './api.js';
 import { initializeEffects, resetEffects } from './picture-effects.js';
-import { displaySuccessMessage, displayErrorMessage, displayFormError } from './result-messages.js';
+import { displaySuccessMessage, displayErrorMessage } from './result-messages.js';
 import { displayFilteredPhotos } from './thubnails-filter.js';
 
 
@@ -98,6 +98,7 @@ const closeInputButton = () => {
     evt.preventDefault();
     closeInput();
     uploadForm.removeEventListener('submit', onFormSubmit); // eslint-disable-line
+
   });
 };
 
@@ -113,6 +114,7 @@ const escCloseInput = () => {
 };
 
 const onOpenEditingWindow = (evt) => {
+  uploadForm.addEventListener('submit', onFormSubmit);
   const file = evt.target.files[0];
   if (file) {
     const imageURL = URL.createObjectURL(file);
@@ -122,6 +124,7 @@ const onOpenEditingWindow = (evt) => {
     });
     editingWindowElement.classList.remove('hidden');
     body.classList.add('modal-open');
+    submit.disabled = false;
     closeInputButton();
     escCloseInput();
     addEventToScale();
@@ -132,7 +135,7 @@ const onFormSubmit = async (evt) => {
   evt.preventDefault();
 
   if (!pristine.validate()) {
-    displayFormError();
+    displayErrorMessage();
     return;
   }
 
@@ -148,8 +151,6 @@ const onFormSubmit = async (evt) => {
     submit.disabled = false;
   }
 };
-
-uploadForm.addEventListener('submit', onFormSubmit);
 
 
 inputPicture.addEventListener('change', onOpenEditingWindow);
