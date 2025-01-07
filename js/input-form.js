@@ -90,7 +90,6 @@ const closeInput = () => {
   document.removeEventListener('keydown', escCloseInput);
   // eslint-disable-next-line no-use-before-define
   document.removeEventListener('click', closeInputButton);
-  uploadForm.removeEventListener('submit', onFormSubmit); // eslint-disable-line
   removeEventToScale();
 };
 
@@ -98,6 +97,7 @@ const closeInputButton = () => {
   closeButton.addEventListener('click', (evt) => {
     evt.preventDefault();
     closeInput();
+    uploadForm.removeEventListener('submit', onFormSubmit); // eslint-disable-line
   });
 };
 
@@ -106,12 +106,13 @@ const escCloseInput = () => {
     if (evt.key === 'Escape') {
       closeInput();
       document.removeEventListener('keydown', onEscPress);
+      uploadForm.removeEventListener('submit', onFormSubmit); // eslint-disable-line
     }
   };
   document.addEventListener('keydown', onEscPress);
 };
 
-const openEditingOnWindow = (evt) => {
+const onOpenEditingWindow = (evt) => {
   const file = evt.target.files[0];
   if (file) {
     const imageURL = URL.createObjectURL(file);
@@ -151,7 +152,7 @@ const onFormSubmit = async (evt) => {
 uploadForm.addEventListener('submit', onFormSubmit);
 
 
-inputPicture.addEventListener('change', openEditingOnWindow);
+inputPicture.addEventListener('change', onOpenEditingWindow);
 initializeEffects();
 
 export const handleImageUpload = (photos) => {
