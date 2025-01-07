@@ -1,29 +1,26 @@
 const SERVER_URL = 'https://29.javascript.htmlacademy.pro/kekstagram';
 
-const ENDPOINTS = {
+const EndPoints = {
   FETCH_DATA: '/data',
   SUBMIT_DATA: '/'
 };
 
-const HTTP_METHODS = {
+const HttpMethods = {
   GET: 'GET',
   POST: 'POST'
 };
 
-const ERROR_MESSAGES = {
-  FETCH_ERROR: 'Не удалось загрузить данные. Попробуйте обновить страницу',
-  SUBMIT_ERROR: 'Не удалось отправить форму. Попробуйте ещё раз'
-};
-
-const fetchData = async (endpoint, errorMessage, method = HTTP_METHODS.GET, payload = null) => {
+const fetchData = async (endpoint, errorMessage, method = HttpMethods.GET, payload = null) => {
   try {
     const response = await fetch(`${SERVER_URL}${endpoint}`, {
       method,
-      body: payload
-    });
+      body: payload,
+    }).catch(() =>
+      null
+    );
 
-    if (!response.ok) {
-      throw new Error();
+    if (!response || !response.ok) {
+      throw new Error(errorMessage);
     }
 
     return await response.json();
@@ -32,8 +29,27 @@ const fetchData = async (endpoint, errorMessage, method = HTTP_METHODS.GET, payl
   }
 };
 
-const getData = () => fetchData(ENDPOINTS.FETCH_DATA, ERROR_MESSAGES.FETCH_ERROR);
 
-const sendData = (data) => fetchData(ENDPOINTS.SUBMIT_DATA, ERROR_MESSAGES.SUBMIT_ERROR, HTTP_METHODS.POST, data);
+const getData = async () => {
+  try {
+    return await fetchData(EndPoints.FETCH_DATA);
+  } catch {
+    return null;
+  }
+};
+
+const sendData = async (data) => {
+  try {
+    const response = await fetch(`${SERVER_URL}${EndPoints.SUBMIT_DATA}`, {
+      method: HttpMethods.POST,
+      body: data,
+    });
+
+    return response;
+  } catch {
+    return null;
+  }
+};
+
 
 export { getData, sendData };

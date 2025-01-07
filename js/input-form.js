@@ -1,7 +1,7 @@
 import { sendData } from './api.js';
-import { initializeEffects, resetEffects } from './pictureEff.js';
-import { displaySuccessMessage, displayErrorMessage, displayFormError } from './resultMessages.js';
-import { displayFilteredPhotos, filterContainer } from './thubnailsFilter.js';
+import { initializeEffects, resetEffects } from './picture-effects.js';
+import { displaySuccessMessage, displayErrorMessage } from './result-messages.js';
+import { displayFilteredPhotos } from './thubnails-filter.js';
 
 
 const HASHTAGS_LIMIT = 5;
@@ -26,7 +26,6 @@ const plusScaleButton = document.querySelector('.scale__control--bigger');
 const submit = uploadForm.querySelector('.img-upload__submit');
 const effectsPrev = uploadForm.querySelectorAll('.effects__preview');
 
-// Функция для изменения масштаба
 const changeScale = (increment) => {
   const currentScaleValue = parseInt(scaleValue.value, 10);
   const newScaleValue = currentScaleValue + (increment ? 25 : -25);
@@ -37,13 +36,11 @@ const changeScale = (increment) => {
   }
 };
 
-// Добавление событий на кнопки изменения масштаба
 const addEventToScale = () => {
   plusScaleButton.addEventListener('click', () => changeScale(true));
   minusScaleButton.addEventListener('click', () => changeScale(false));
 };
 
-// Удаление событий с кнопок изменения масштаба
 const removeEventToScale = () => {
   plusScaleButton.removeEventListener('click', () => changeScale(true));
   minusScaleButton.removeEventListener('click', () => changeScale(false));
@@ -57,24 +54,20 @@ const pristine = new Pristine(uploadForm, {
   errorTextClass: 'img-upload__field-wrapper--error',
 });
 
-// Нормализация строк хэштегов
 const normalizeTags = (tagString) =>
   tagString.trim().split(' ').filter(Boolean);
 
-// Проверка на правильность хэштегов
 const hasValidTags = (value) =>
   normalizeTags(value).every((tag) => CORRECT_SYMBOLS.test(tag));
 
 const hasValidCount = (value) =>
   normalizeTags(value).length <= HASHTAGS_LIMIT;
 
-// Проверка на уникальность хэштегов
 const hasUniqueTags = (value) => {
   const lowerCaseTags = normalizeTags(value).map((tag) => tag.toLowerCase());
   return lowerCaseTags.length === new Set(lowerCaseTags).size;
 };
 
-// Инициализация валидаторов с использованием pristine
 pristine.addValidator(hashtagField, hasValidCount, ErrorText.INVALID_COUNT, 3, true);
 pristine.addValidator(hashtagField, hasUniqueTags, ErrorText.NOT_UNIQUE, 1, true);
 pristine.addValidator(hashtagField, hasValidTags, ErrorText.INVALID_PATTERN, 2, true);
@@ -90,7 +83,6 @@ const closeInput = () => {
   document.removeEventListener('keydown', escCloseInput);
   // eslint-disable-next-line no-use-before-define
   document.removeEventListener('click', closeInputButton);
-  uploadForm.removeEventListener('submit', onFormSubmit); // eslint-disable-line
   removeEventToScale();
 };
 
@@ -98,6 +90,8 @@ const closeInputButton = () => {
   closeButton.addEventListener('click', (evt) => {
     evt.preventDefault();
     closeInput();
+    uploadForm.removeEventListener('submit', onFormSubmit); // eslint-disable-line
+
   });
 };
 
@@ -106,12 +100,15 @@ const escCloseInput = () => {
     if (evt.key === 'Escape') {
       closeInput();
       document.removeEventListener('keydown', onEscPress);
+      uploadForm.removeEventListener('submit', onFormSubmit); // eslint-disable-line
     }
   };
   document.addEventListener('keydown', onEscPress);
 };
 
-const openEditingWindow = (evt) => {
+const onOpenEditingWindow = (evt) => {
+  // eslint-disable-next-line no-use-before-define
+  uploadForm.addEventListener('submit', onFormSubmit);
   const file = evt.target.files[0];
   if (file) {
     const imageURL = URL.createObjectURL(file);
@@ -129,45 +126,43 @@ const openEditingWindow = (evt) => {
 
 const onFormSubmit = async (evt) => {
   evt.preventDefault();
-
   if (!pristine.validate()) {
-    displayFormError();
+    displayErrorMessage();
     return;
   }
 
   submit.disabled = true;
 
   try {
-    await sendData(new FormData(uploadForm));
-    displaySuccessMessage();
-    closeInput();
+    const response = await sendData(new FormData(uploadForm));
+
+    // Если сервер вернул код ошибки, обрабатываем её вручную
+    if (!response.ok) {
+      displayErrorMessage();
+    } else {
+      displaySuccessMessage();
+      closeInput();
+    }
   } catch (error) {
+    // Здесь перехватываются только ошибки сети
     displayErrorMessage();
   } finally {
     submit.disabled = false;
   }
 };
 
-uploadForm.addEventListener('submit', onFormSubmit);
 
-
-inputPicture.addEventListener('change', openEditingWindow);
+inputPicture.addEventListener('change', onOpenEditingWindow);
 initializeEffects();
 
 export const handleImageUpload = (photos) => {
-  filterContainer.style.display = 'none'; // Скрываем фильтры до отправки изображения
 
   uploadForm.addEventListener('submit', async (evt) => {
     evt.preventDefault();
 
-    try {
-      await sendData(new FormData(uploadForm));
-      displayFilteredPhotos(photos);
-      filterContainer.style.display = 'flex';
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error('Ошибка отправки изображения:', err);
-    }
+    await sendData(new FormData(uploadForm));
+    displayFilteredPhotos(photos);
+
   });
 };
 
